@@ -6,6 +6,7 @@
 import type { CommandHandler } from "../types.ts";
 import { getPackageMetadata, parsePackageSpec } from "../lib/registry.ts";
 import { assessRisk } from "../lib/risk-scoring.ts";
+import { promptConfirm, restoreStdin } from "../lib/prompt.ts";
 import { InvalidPackageSpecError } from "../errors.ts";
 import { renderRiskAssessment, renderWarning, renderSuccess, renderError, Spinner } from "../ui/output.ts";
 
@@ -42,10 +43,18 @@ export const npxCommand: CommandHandler = async (context) => {
         return await runNpx(name, restArgs);
       }
 
-      // Interactive prompt would go here
-      // For MVP, just warn and exit
-      renderWarning("Medium risk detected - use --yes to proceed");
-      return 1;
+      // Interactive prompt for MEDIUM risk
+      console.log("");
+      const shouldProceed = await promptConfirm("Continue anyway?", false);
+      restoreStdin();
+
+      if (!shouldProceed) {
+        renderWarning("Aborted by user");
+        return 1;
+      }
+
+      renderWarning("Proceeding with medium risk package");
+      return await runNpx(name, restArgs);
     }
 
     // HIGH or CRITICAL
