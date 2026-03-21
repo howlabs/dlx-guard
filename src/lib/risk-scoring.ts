@@ -13,6 +13,7 @@ import {
 import { checkTyposquat } from "./typosquat.ts";
 import { getThresholds } from "./config.ts";
 import { getPublishFrequencyRisk } from "./publish-frequency.ts";
+import { getOwnerChangeRisk } from "./owner-change.ts";
 
 /**
  * Risk score contribution with explanation
@@ -175,6 +176,15 @@ export function calculateRiskScore(metadata: NpmPackageMetadata): ScoreContribut
     contributions.push({
       score: publishFreqRisk.score,
       reason: publishFreqRisk.reason,
+    });
+  }
+
+  // Check 7: Owner change detection
+  const ownerChangeRisk = getOwnerChangeRisk(metadata);
+  if (ownerChangeRisk) {
+    contributions.push({
+      score: ownerChangeRisk.score,
+      reason: ownerChangeRisk.reason,
     });
   }
 

@@ -123,6 +123,8 @@ describe("assessRisk", () => {
         created: "2024-01-01T00:00:00.000Z",
         modified: "2024-01-15T00:00:00.000Z",
       },
+      // Add maintainers to avoid owner change detection
+      maintainers: [{ name: "trusted-dev" }, { name: "co-maintainer" }],
     });
 
     const result = assessRisk(metadata);
