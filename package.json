@@ -9,17 +9,28 @@
     "test": "bun test",
     "lint": "bunx tsc --noEmit",
     "format": "bunx prettier --write .",
-    "typecheck": "bunx tsc --noEmit"
+    "typecheck": "bunx tsc --noEmit",
+    "prepublishOnly": "bun run build"
   },
   "bin": {
     "dlx-guard": "./dist/dlx-guard"
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CONTRIBUTING.md"
+  ],
   "keywords": [
     "npm",
     "npx",
+    "pnpm",
+    "bunx",
     "security",
     "supply-chain",
-    "package-safety"
+    "package-safety",
+    "cli",
+    "devtools"
   ],
   "author": "",
   "license": "MIT",
@@ -35,5 +46,16 @@
   },
   "engines": {
     "node": ">=18.0.0"
-  }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/dlx-guard.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/dlx-guard/issues"
+  },
+  "homepage": "https://github.com/yourusername/dlx-guard#readme"
 }
