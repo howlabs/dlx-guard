@@ -95,21 +95,43 @@ export function renderSuccess(message: string): void {
 }
 
 /**
+ * Format elapsed time as MM:SS or HH:MM:SS
+ */
+function formatElapsedTime(ms: number): string {
+  const totalSeconds = Math.floor(ms / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  if (hours > 0) {
+    return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  }
+  return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+}
+
+/**
  * Render a spinner (for long-running operations)
+ * Shows animated spinner with elapsed time
  */
 export class Spinner {
   private frames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
   private frameIndex = 0;
   private interval?: ReturnType<typeof setInterval>;
   private readonly stream = process.stderr;
+  private startTime = 0;
+  private message = "";
 
   start(message: string): void {
+    this.message = message;
+    this.startTime = Date.now();
+
     // Hide cursor
     this.stream.write("\x1b[?25l");
 
     this.interval = setInterval(() => {
       const frame = this.frames[this.frameIndex];
-      this.stream.write(`\r${frame} ${message}`);
+      const elapsed = formatElapsedTime(Date.now() - this.startTime);
+      this.stream.write(`\r${frame} ${this.message} ${COLORS.dim}[${elapsed}]${COLORS.reset}`);
       this.frameIndex = (this.frameIndex + 1) % this.frames.length;
     }, 80);
   }
@@ -129,5 +151,12 @@ export class Spinner {
 
   stopAndPersist(finalMessage: string): void {
     this.stop(finalMessage);
+  }
+
+  /**
+   * Get the elapsed time in milliseconds
+   */
+  getElapsedTime(): number {
+    return Date.now() - this.startTime;
   }
 }
