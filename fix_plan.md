@@ -54,7 +54,7 @@ Tất cả core features đã được implement và test.
 
 ### [TODO] Advanced Security Checks
 - [x] Publish Frequency Analysis (burst publishing detection)
-- [ ] Owner change detection from npm registry
+- [x] Owner change detection from npm registry
 - [ ] Dependency tree analysis
 
 ### [TODO] Enterprise Features
@@ -64,7 +64,7 @@ Tất cả core features đã được implement và test.
 
 ## Project Status
 
-**Version:** v0.5.0
+**Version:** v0.5.1
 **Tests:** 31 passing
 **Typecheck:** Clean
 **Binary:** Working (Windows tested)
@@ -134,6 +134,18 @@ Tất cả core features đã được implement và test.
 - [x] Tests updated to avoid false positives
 - [x] Tests passing, binary built and tested
 
+### [DONE] Loop 13 (v0.5.1) - Owner Change Detection
+- [x] Create lib/owner-change.ts module
+- [x] List of known reputable publishers
+- [x] Detect packages with no maintainers
+- [x] Detect single unknown maintainer on established packages
+- [x] Detect new packages with unknown maintainers
+- [x] Pattern matching for suspicious maintainer names
+- [x] Score contribution: +1 to +3 based on severity
+- [x] Integrated into risk scoring engine
+- [x] Tests updated with proper maintainer data
+- [x] Tests passing, binary built and tested
+
 ## Commands Available
 
 ```bash
@@ -152,6 +164,7 @@ dlx-guard bunx <package>        # Run bunx with security check
 5. ✅ Metadata completeness
 6. ✅ Typosquatting detection
 7. ✅ Burst publishing detection
+8. ✅ Owner change detection
 
 ## Learnings
 
