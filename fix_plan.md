@@ -47,10 +47,10 @@ Tất cả core features đã được implement và test.
 - [x] Add verbose mode for debugging
 - [x] Color-coded risk badges in output
 
-### [TODO] Configuration File Support
-- [ ] Support `.dlx-guardrc.json` for user preferences
-- [ ] Allow custom risk thresholds
-- [ ] Allow package whitelist
+### [DONE] Configuration File Support
+- [x] Support `.dlx-guardrc.json` for user preferences
+- [x] Allow custom risk thresholds
+- [x] Allow package whitelist
 
 ### [TODO] Advanced Security Checks
 - [ ] Publish Frequency Analysis (burst publishing detection)
@@ -64,7 +64,7 @@ Tất cả core features đã được implement và test.
 
 ## Project Status
 
-**Version:** v0.3.4
+**Version:** v0.4.0
 **Tests:** 31 passing
 **Typecheck:** Clean
 **Binary:** Working (Windows tested)
@@ -103,6 +103,23 @@ Tất cả core features đã được implement và test.
 - [x] Tests passing, binary built and tested
 
 **Phase 1: Enhanced UI/UX - COMPLETE!**
+
+### [DONE] Loop 11 (v0.4.0) - Configuration File Support
+- [x] Create types/config.ts with DlxGuardConfig schema
+- [x] Create lib/config.ts with validation and loading
+- [x] Support ~/.dlx-guardrc.json and ./.dlx-guardrc.json
+- [x] Custom risk thresholds (low, medium, high)
+- [x] Package whitelist with exact names and glob patterns
+- [x] Toggle cache on/off via config
+- [x] Custom cache TTL in minutes
+- [x] Default verbose mode setting
+- [x] Integrate with CLI - config loaded at startup
+- [x] Risk scoring uses custom thresholds
+- [x] Inspect command checks whitelist
+- [x] Tests updated to load config
+- [x] Tests passing, binary built and tested
+
+**Phase 2: Configuration File Support - COMPLETE!**
 
 ## Commands Available
 
