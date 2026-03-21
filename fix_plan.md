@@ -64,10 +64,17 @@ Tất cả core features đã được implement và test.
 
 ## Project Status
 
-**Version:** v0.3.0
+**Version:** v0.3.1
 **Tests:** 31 passing
 **Typecheck:** Clean
 **Binary:** Working (Windows tested)
+
+## Recent Changes
+
+### [DONE] Loop 7 (v0.3.1) - Code Cleanup
+- [x] Remove unused InvalidPackageSpecError import from npx.ts
+- [x] Verify all tests passing
+- [x] Build and test binary
 
 ## Commands Available
 
