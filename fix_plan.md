@@ -52,10 +52,10 @@ Tất cả core features đã được implement và test.
 - [x] Allow custom risk thresholds
 - [x] Allow package whitelist
 
-### [TODO] Advanced Security Checks
+### [DONE] Advanced Security Checks
 - [x] Publish Frequency Analysis (burst publishing detection)
 - [x] Owner change detection from npm registry
-- [ ] Dependency tree analysis
+- [x] Dependency tree analysis
 
 ### [TODO] Enterprise Features
 - [ ] Team audit log
@@ -64,7 +64,7 @@ Tất cả core features đã được implement và test.
 
 ## Project Status
 
-**Version:** v0.5.1
+**Version:** v0.6.0
 **Tests:** 31 passing
 **Typecheck:** Clean
 **Binary:** Working (Windows tested)
@@ -146,6 +146,17 @@ Tất cả core features đã được implement và test.
 - [x] Tests updated with proper maintainer data
 - [x] Tests passing, binary built and tested
 
+### [DONE] Loop 14 (v0.6.0) - Dependency Tree Analysis
+- [x] Create lib/dependency-tree.ts module
+- [x] Curated list of known malicious packages
+- [x] Suspicious pattern detection (test-, -cli, -dev)
+- [x] Check direct dependencies against malicious list
+- [x] Score contribution: +1 to +5 based on severity
+- [x] Integrated into risk scoring engine
+- [x] Tests passing, binary built and tested
+
+**Phase 3: Advanced Security Checks - COMPLETE!**
+
 ## Commands Available
 
 ```bash
@@ -165,6 +176,7 @@ dlx-guard bunx <package>        # Run bunx with security check
 6. ✅ Typosquatting detection
 7. ✅ Burst publishing detection
 8. ✅ Owner change detection
+9. ✅ Malicious dependency detection
 
 ## Learnings
 
