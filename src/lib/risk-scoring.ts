@@ -12,6 +12,7 @@ import {
 } from "../constants.ts";
 import { checkTyposquat } from "./typosquat.ts";
 import { getThresholds } from "./config.ts";
+import { getPublishFrequencyRisk } from "./publish-frequency.ts";
 
 /**
  * Risk score contribution with explanation
@@ -165,6 +166,15 @@ export function calculateRiskScore(metadata: NpmPackageMetadata): ScoreContribut
     contributions.push({
       score: RISK_SCORES.SPARSE_METADATA,
       reason: "Limited package metadata (no description, homepage, or repository)",
+    });
+  }
+
+  // Check 6: Burst publishing detection
+  const publishFreqRisk = getPublishFrequencyRisk(metadata);
+  if (publishFreqRisk) {
+    contributions.push({
+      score: publishFreqRisk.score,
+      reason: publishFreqRisk.reason,
     });
   }
 

@@ -116,12 +116,19 @@ describe("assessRisk", () => {
     const metadata = createMetadata({
       weeks: 0.01,
       scripts: { postinstall: "node something.js" },
+      // Add time data to avoid burst publishing detection
+      time: {
+        "1.0.0": "2024-01-01T00:00:00.000Z",
+        "1.0.1": "2024-01-15T00:00:00.000Z",
+        created: "2024-01-01T00:00:00.000Z",
+        modified: "2024-01-15T00:00:00.000Z",
+      },
     });
 
     const result = assessRisk(metadata);
 
     expect(result.recommendations.length).toBeGreaterThan(0);
-    // Score is 6 (3+3) which is HIGH level
+    // Score is 6 (3+3) which is HIGH level with default thresholds
     expect(result.level).toBe("HIGH");
   });
 
