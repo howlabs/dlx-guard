@@ -15,10 +15,14 @@ COMMANDS:
   npx <package>         Run npx with security check
   pnpm dlx <package>    Run pnpm dlx with security check
   bunx <package>        Run bunx with security check
+  clear-cache           Clear package metadata cache
 
 OPTIONS:
   -j, --json            Output JSON instead of formatted text
   -y, --yes             Auto-confirm prompts (skip interactive check)
+  -V, --verbose         Enable verbose debug output
+      --no-verbose      Disable verbose output (overrides config)
+      --dry-run         Check package without executing
   -h, --help            Show this help message
   -v, --version         Show version number
 
@@ -41,6 +45,6 @@ RISK LEVELS:
   High       - Significant risks - avoid if possible
   Critical   - Dangerous - do not run
 
-For more information, visit: https://github.com/yourusername/dlx-guard
+For more information, visit: https://github.com/howlabs/dlx-guard
 `);
 }

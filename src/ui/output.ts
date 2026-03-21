@@ -4,9 +4,8 @@
  */
 
 import type { RiskAssessment, CliOutput } from "../types.ts";
-import { RISK_LEVELS } from "../constants.ts";
 
-const COLORS = {
+export const COLORS = {
   reset: "\x1b[0m",
   bright: "\x1b[1m",
   dim: "\x1b[2m",

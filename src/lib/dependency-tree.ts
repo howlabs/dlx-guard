@@ -8,10 +8,13 @@ import type { NpmPackageMetadata } from "../types.ts";
 /**
  * Known malicious or high-risk packages
  * This is a curated list of packages that have been involved in security incidents
+ *
+ * Note: Only include packages that are inherently malicious or have no legitimate use.
+ * Packages that had specific compromised versions (like eslint-scope@3.6.0) are not
+ * included as their current versions are safe.
  */
 const KNOWN_MALICIOUS = [
   "crossenv",
-  "eslint-scope",
   "event-stream",
   "ua-parser-js",
   "flatmap-stream",

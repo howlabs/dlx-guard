@@ -30,6 +30,7 @@ describe("checkTyposquat", () => {
     expect(checkTyposquat("react").isTyposquat).toBe(false);
     expect(checkTyposquat("vue").isTyposquat).toBe(false);
     expect(checkTyposquat("express").isTyposquat).toBe(false);
+    expect(checkTyposquat("eslint-scope").isTyposquat).toBe(false); // Legitimate package
   });
 
   it("should detect typosquatting with one character difference", () => {
@@ -102,5 +103,56 @@ describe("getPopularPackages", () => {
     expect(packages).toContain("vue");
     expect(packages).toContain("express");
     expect(packages).toContain("lodash");
+  });
+});
+
+describe("typosquat edge cases", () => {
+  it("should detect word-suffix+word pattern (word-WORDword)", () => {
+    // Pattern: /^([a-z]+)-([a-z]+)\1$/ matches "react-toolsreact"
+    const result = checkTyposquat("react-toolsreact");
+    expect(result.isTyposquat).toBe(true);
+    expect(result.similarPackage).toBe("suspicious pattern");
+  });
+
+  it("should detect double name pattern", () => {
+    const result = checkTyposquat("reactreact");
+    expect(result.isTyposquat).toBe(true);
+    expect(result.similarPackage).toBe("suspicious pattern");
+  });
+
+  it("should handle unicode characters gracefully", () => {
+    const result = checkTyposquat("react\u200b"); // Zero-width space
+    // Should not crash, may or may not be typosquat depending on implementation
+    expect(typeof result.isTyposquat).toBe("boolean");
+  });
+
+  it("should return distance for typosquat packages", () => {
+    const result = checkTyposquat("reaact");
+    expect(result.distance).toBeDefined();
+    expect(result.distance).toBeGreaterThan(0);
+  });
+
+  it("should not flag exact popular package with different casing", () => {
+    expect(checkTyposquat("React").isTyposquat).toBe(false);
+    expect(checkTyposquat("REACT").isTyposquat).toBe(false);
+    expect(checkTyposquat("ReAcT").isTyposquat).toBe(false);
+  });
+
+  it("should detect typosquat for popular packages with numbers", () => {
+    // vitest is 6 chars, so typosquat with distance 1-2 should be detected
+    expect(checkTyposquat("vitestt").isTyposquat).toBe(true);
+    // Note: jest is only 4 chars (< 5), so it's not checked for typosquatting
+    // This is by design to avoid false positives on short names
+  });
+
+  it("should not flag legitimate dependencies", () => {
+    // These are legitimate packages that should not be flagged
+    expect(checkTyposquat("eslint-scope").isTyposquat).toBe(false);
+    expect(checkTyposquat("@babel/core").isTyposquat).toBe(false);
+  });
+
+  it("should not flag legitimate packages with repeated segments", () => {
+    // "react-tools-react" has different segments, not a suspicious repeat pattern
+    expect(checkTyposquat("react-tools-react").isTyposquat).toBe(false);
   });
 });

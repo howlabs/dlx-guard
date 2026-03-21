@@ -24,7 +24,8 @@ interface ParsedArgs {
     yes: boolean;
     help: boolean;
     version: boolean;
-    verbose: boolean;
+    verbose: boolean | null; // null = use config, true = force on, false = force off
+    dryRun: boolean;
   };
 }
 
@@ -32,17 +33,6 @@ interface ParsedArgs {
  * Parse command line arguments following POSIX conventions
  */
 function parseCliArgs(args: string[]): ParsedArgs {
-  const result: ParsedArgs = {
-    rest: [],
-    flags: {
-      json: false,
-      yes: false,
-      help: false,
-      version: false,
-      verbose: false,
-    },
-  };
-
   const { values, positionals } = parseArgs({
     args,
     options: {
@@ -51,17 +41,33 @@ function parseCliArgs(args: string[]): ParsedArgs {
       help: { type: "boolean", short: "h" },
       version: { type: "boolean", short: "v" },
       verbose: { type: "boolean", short: "V" },
+      "no-verbose": { type: "boolean" },
+      "dry-run": { type: "boolean" },
     },
     allowPositionals: true,
     strict: false,
   });
 
-  result.flags = {
-    json: values.json as boolean,
-    yes: values.yes as boolean,
-    help: values.help as boolean,
-    version: values.version as boolean,
-    verbose: values.verbose as boolean,
+  // Track verbose flag: null = use config default, true = force on, false = force off
+  const verboseCli = values.verbose as boolean | undefined;
+  const noVerbose = values["no-verbose"] as boolean | undefined;
+  let verboseFlag: boolean | null = null;
+  if (verboseCli) {
+    verboseFlag = true;
+  } else if (noVerbose) {
+    verboseFlag = false;
+  }
+
+  const result: ParsedArgs = {
+    rest: [],
+    flags: {
+      json: (values.json ?? false) as boolean,
+      yes: (values.yes ?? false) as boolean,
+      help: (values.help ?? false) as boolean,
+      version: (values.version ?? false) as boolean,
+      verbose: verboseFlag,
+      dryRun: ((values["dry-run"] as boolean | undefined) ?? false),
+    },
   };
 
   // Extract command and package
@@ -87,10 +93,12 @@ async function main(): Promise<number> {
   const args = parseCliArgs(process.argv.slice(2));
 
   // Merge config file verbose setting with command-line flag
-  // CLI flag takes precedence
-  if (isVerboseByDefault() && !args.flags.verbose) {
-    args.flags.verbose = true;
+  // CLI flag takes precedence: null = use config, true = force on, false = force off
+  let finalVerbose = args.flags.verbose;
+  if (finalVerbose === null) {
+    finalVerbose = isVerboseByDefault();
   }
+  args.flags.verbose = finalVerbose;
 
   // Handle version flag
   if (args.flags.version) {
@@ -123,7 +131,14 @@ async function main(): Promise<number> {
   return await commandHandler({
     packageName: args.package,
     restArgs: args.rest,
-    flags: args.flags,
+    flags: {
+      json: args.flags.json,
+      yes: args.flags.yes,
+      help: args.flags.help,
+      version: args.flags.version,
+      verbose: finalVerbose, // Resolved to boolean
+      dryRun: args.flags.dryRun,
+    },
   });
 }
 

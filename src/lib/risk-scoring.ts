@@ -6,7 +6,6 @@
 
 import type { NpmPackageMetadata, RiskAssessment } from "../types.ts";
 import {
-  RISK_THRESHOLDS,
   RISK_SCORES,
   DEPENDENCY_THRESHOLDS,
 } from "../constants.ts";

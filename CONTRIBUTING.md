@@ -15,7 +15,7 @@ Thank you for your interest in contributing to `dlx-guard`! This document provid
 2. Clone your fork locally:
 
 ```bash
-git clone https://github.com/yourusername/dlx-guard.git
+git clone https://github.com/howlabs/dlx-guard.git
 cd dlx-guard
 ```
 
@@ -74,7 +74,8 @@ dlx-guard/
 │   │   ├── inspect.ts       # inspect command
 │   │   ├── npx.ts           # npx wrapper
 │   │   ├── pnpm-dlx.ts      # pnpm dlx wrapper
-│   │   └── bunx.ts          # bunx wrapper
+│   │   ├── bunx.ts          # bunx wrapper
+│   │   └── clear-cache.ts   # cache management
 │   ├── lib/                 # Core libraries
 │   │   ├── registry.ts      # npm registry API client
 │   │   ├── risk-scoring.ts  # Risk calculation engine

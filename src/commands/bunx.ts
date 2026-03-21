@@ -7,7 +7,7 @@ import type { CommandHandler } from "../types.ts";
 import { getPackageMetadata, parsePackageSpec } from "../lib/registry.ts";
 import { assessRisk } from "../lib/risk-scoring.ts";
 import { promptConfirm, restoreStdin } from "../lib/prompt.ts";
-import { renderRiskAssessment, renderWarning, renderSuccess, renderError, Spinner } from "../ui/output.ts";
+import { renderRiskAssessment, renderWarning, renderSuccess, renderError, Spinner, COLORS } from "../ui/output.ts";
 
 export const bunxCommand: CommandHandler = async (context) => {
   const { packageName, restArgs, flags } = context;
@@ -29,6 +29,14 @@ export const bunxCommand: CommandHandler = async (context) => {
     spinner.stop(`Security check complete`);
 
     renderRiskAssessment(name, assessment);
+
+    // Dry run mode - show what would happen without executing
+    if (flags.dryRun) {
+      console.log("");
+      console.log(`${COLORS.dim}Dry run mode - not executing${COLORS.reset}`);
+      console.log(`Would run: ${COLORS.cyan}bunx ${name} ${restArgs.join(" ")}${COLORS.reset}`);
+      return 0;
+    }
 
     // Decision based on risk level
     if (assessment.level === "LOW") {

@@ -3,11 +3,12 @@
  * Following gstack pattern: all commands defined here, imported elsewhere
  */
 
-import type { CommandContext, CommandHandler } from "./types.ts";
+import type { CommandHandler } from "./types.ts";
 import { inspectCommand } from "./commands/inspect.ts";
 import { npxCommand } from "./commands/npx.ts";
 import { pnpmDlxCommand } from "./commands/pnpm-dlx.ts";
 import { bunxCommand } from "./commands/bunx.ts";
+import { clearCacheCommand } from "./commands/clear-cache.ts";
 
 /**
  * Command registry maps command names to their handlers
@@ -19,6 +20,7 @@ export const COMMAND_REGISTRY = new Map<string, CommandHandler>([
   ["pnpm", pnpmDlxCommand],
   ["dlx", pnpmDlxCommand], // Alias for pnpm dlx
   ["bunx", bunxCommand],
+  ["clear-cache", clearCacheCommand],
 ]);
 
 /**

@@ -2,7 +2,7 @@
  * Tests for npm registry client
  */
 
-import { describe, it, expect, beforeEach, afterEach } from "bun:test";
+import { describe, it, expect } from "bun:test";
 import { parsePackageSpec } from "../src/lib/registry.ts";
 
 describe("parsePackageSpec", () => {

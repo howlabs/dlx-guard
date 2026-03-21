@@ -5,8 +5,7 @@
 
 import type { CommandHandler } from "../types.ts";
 import { getPackageMetadata, parsePackageSpec } from "../lib/registry.ts";
-import { assessRisk, riskAssessmentToJson, calculateRiskScore } from "../lib/risk-scoring.ts";
-import { InvalidPackageSpecError } from "../errors.ts";
+import { assessRisk, calculateRiskScore } from "../lib/risk-scoring.ts";
 import { renderRiskAssessment, renderJsonOutput, renderError, renderSuccess, Spinner } from "../ui/output.ts";
 import { setVerbose, logConfig, logRegistryRequest, logTiming, logMetadataDump, logRiskScoring } from "../lib/verbose.ts";
 import { isPackageWhitelisted } from "../lib/config.ts";

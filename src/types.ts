@@ -23,6 +23,8 @@ export interface CommandContext {
     version: boolean;
     /** Enable verbose debug output */
     verbose: boolean;
+    /** Dry run - check only, don't execute */
+    dryRun: boolean;
   };
 }
 

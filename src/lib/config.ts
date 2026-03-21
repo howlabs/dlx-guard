@@ -5,9 +5,7 @@
 
 import type { DlxGuardConfig, EffectiveConfig } from "../types/config.ts";
 import { DEFAULT_CONFIG } from "../types/config.ts";
-import { logConfig, verboseLog } from "./verbose.ts";
-
-const CACHE_DIR = `${process.env.HOME ?? process.env.USERPROFILE ?? ""}/.dlx-guard`;
+import { verboseLog } from "./verbose.ts";
 
 /**
  * Get possible config file paths in priority order
