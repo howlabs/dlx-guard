@@ -43,7 +43,7 @@ Tất cả core features đã được implement và test.
 ## Future Enhancements (BACKLOG)
 
 ### [TODO] Enhanced UI/UX
-- [ ] Improve spinner with elapsed time
+- [x] Improve spinner with elapsed time
 - [ ] Add verbose mode for debugging
 - [ ] Color-coded risk badges in output
 
@@ -64,7 +64,7 @@ Tất cả core features đã được implement và test.
 
 ## Project Status
 
-**Version:** v0.3.1
+**Version:** v0.3.2
 **Tests:** 31 passing
 **Typecheck:** Clean
 **Binary:** Working (Windows tested)
@@ -75,6 +75,13 @@ Tất cả core features đã được implement và test.
 - [x] Remove unused InvalidPackageSpecError import from npx.ts
 - [x] Verify all tests passing
 - [x] Build and test binary
+
+### [DONE] Loop 8 (v0.3.2) - Spinner Elapsed Time
+- [x] Add elapsed time display to spinner (MM:SS or HH:MM:SS)
+- [x] Add formatElapsedTime() helper function
+- [x] Add getElapsedTime() method to Spinner class
+- [x] Apply dim color styling for time display
+- [x] Tests passing, binary built and tested
 
 ## Commands Available
 
