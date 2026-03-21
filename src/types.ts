@@ -21,6 +21,8 @@ export interface CommandContext {
     help: boolean;
     /** Show version */
     version: boolean;
+    /** Enable verbose debug output */
+    verbose: boolean;
   };
 }
 

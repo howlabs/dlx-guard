@@ -5,12 +5,19 @@
 
 import type { CommandHandler } from "../types.ts";
 import { getPackageMetadata, parsePackageSpec } from "../lib/registry.ts";
-import { assessRisk, riskAssessmentToJson } from "../lib/risk-scoring.ts";
+import { assessRisk, riskAssessmentToJson, calculateRiskScore } from "../lib/risk-scoring.ts";
 import { InvalidPackageSpecError } from "../errors.ts";
 import { renderRiskAssessment, renderJsonOutput, renderError, Spinner } from "../ui/output.ts";
+import { setVerbose, logConfig, logRegistryRequest, logTiming, logMetadataDump, logRiskScoring } from "../lib/verbose.ts";
 
 export const inspectCommand: CommandHandler = async (context) => {
   const { packageName, flags } = context;
+
+  // Set verbose mode based on flag
+  setVerbose(flags.verbose);
+  if (flags.verbose) {
+    logConfig();
+  }
 
   if (!packageName) {
     renderError("Package name is required");
@@ -18,13 +25,33 @@ export const inspectCommand: CommandHandler = async (context) => {
     return 1;
   }
 
+  const startTime = Date.now();
+
   const spinner = new Spinner();
   spinner.start(`Fetching metadata for ${packageName}...`);
 
   try {
     const { name } = parsePackageSpec(packageName);
+
+    if (flags.verbose) {
+      logRegistryRequest(name);
+    }
+
+    const fetchStart = Date.now();
     const metadata = await getPackageMetadata(name);
+    const fetchDuration = Date.now() - fetchStart;
+
+    if (flags.verbose) {
+      logTiming("Registry fetch", fetchDuration);
+      logMetadataDump(metadata);
+    }
+
+    const contributions = calculateRiskScore(metadata);
     const assessment = assessRisk(metadata);
+
+    if (flags.verbose) {
+      logRiskScoring(assessment.score, assessment.level, contributions);
+    }
 
     spinner.stopAndPersist(`Fetched metadata for ${name}`);
 
@@ -36,6 +63,11 @@ export const inspectCommand: CommandHandler = async (context) => {
       });
     } else {
       renderRiskAssessment(name, assessment);
+    }
+
+    const totalDuration = Date.now() - startTime;
+    if (flags.verbose) {
+      logTiming("Total execution", totalDuration);
     }
 
     // Return exit code based on risk level

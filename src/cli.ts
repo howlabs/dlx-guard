@@ -23,6 +23,7 @@ interface ParsedArgs {
     yes: boolean;
     help: boolean;
     version: boolean;
+    verbose: boolean;
   };
 }
 
@@ -37,6 +38,7 @@ function parseCliArgs(args: string[]): ParsedArgs {
       yes: false,
       help: false,
       version: false,
+      verbose: false,
     },
   };
 
@@ -47,6 +49,7 @@ function parseCliArgs(args: string[]): ParsedArgs {
       yes: { type: "boolean", short: "y" },
       help: { type: "boolean", short: "h" },
       version: { type: "boolean", short: "v" },
+      verbose: { type: "boolean", short: "V" },
     },
     allowPositionals: true,
     strict: false,
@@ -57,6 +60,7 @@ function parseCliArgs(args: string[]): ParsedArgs {
     yes: values.yes as boolean,
     help: values.help as boolean,
     version: values.version as boolean,
+    verbose: values.verbose as boolean,
   };
 
   // Extract command and package

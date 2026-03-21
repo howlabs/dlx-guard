@@ -15,7 +15,7 @@ import { checkTyposquat } from "./typosquat.ts";
 /**
  * Risk score contribution with explanation
  */
-interface ScoreContribution {
+export interface ScoreContribution {
   score: number;
   reason: string;
 }
@@ -98,7 +98,7 @@ function hasSparseMetadata(metadata: NpmPackageMetadata): boolean {
 /**
  * Calculate risk score and generate reasons
  */
-function calculateRiskScore(metadata: NpmPackageMetadata): ScoreContribution[] {
+export function calculateRiskScore(metadata: NpmPackageMetadata): ScoreContribution[] {
   const contributions: ScoreContribution[] = [];
 
   // Check 0: Typosquatting (được check đầu tiên vì high risk)

@@ -6,6 +6,7 @@
 import type { NpmPackageMetadata, CacheEntry } from "../types.ts";
 import { NPM_REGISTRY, CACHE_DIR, CACHE_TTL } from "../constants.ts";
 import { RegistryFetchError, PackageNotFoundError } from "../errors.ts";
+import { logCacheHit } from "./verbose.ts";
 
 /**
  * Parse package name and version from spec
@@ -187,8 +188,10 @@ export async function getPackageMetadata(
   if (useCache) {
     const cached = await loadCachedMetadata(packageName);
     if (cached) {
+      logCacheHit(packageName, true);
       return cached;
     }
+    logCacheHit(packageName, false);
   }
 
   // Fetch from registry
