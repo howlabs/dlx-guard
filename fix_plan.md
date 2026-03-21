@@ -53,7 +53,7 @@ Tất cả core features đã được implement và test.
 - [x] Allow package whitelist
 
 ### [TODO] Advanced Security Checks
-- [ ] Publish Frequency Analysis (burst publishing detection)
+- [x] Publish Frequency Analysis (burst publishing detection)
 - [ ] Owner change detection from npm registry
 - [ ] Dependency tree analysis
 
@@ -64,7 +64,7 @@ Tất cả core features đã được implement và test.
 
 ## Project Status
 
-**Version:** v0.4.0
+**Version:** v0.5.0
 **Tests:** 31 passing
 **Typecheck:** Clean
 **Binary:** Working (Windows tested)
@@ -121,6 +121,19 @@ Tất cả core features đã được implement và test.
 
 **Phase 2: Configuration File Support - COMPLETE!**
 
+### [DONE] Loop 12 (v0.5.0) - Publish Frequency Analysis
+- [x] Create lib/publish-frequency.ts module
+- [x] Extract and sort all version timestamps
+- [x] Count recent versions within 7-day burst window
+- [x] Calculate versions per week rate
+- [x] Detect >10 versions in 7 days (burst publishing)
+- [x] Detect >3 versions per day average (suspicious rate)
+- [x] Detect >50 versions in <4 weeks (spam)
+- [x] Score contribution: +2 to +4 based on severity
+- [x] Integrated into risk scoring engine
+- [x] Tests updated to avoid false positives
+- [x] Tests passing, binary built and tested
+
 ## Commands Available
 
 ```bash
@@ -138,6 +151,7 @@ dlx-guard bunx <package>        # Run bunx with security check
 4. ✅ Dependency graph size
 5. ✅ Metadata completeness
 6. ✅ Typosquatting detection
+7. ✅ Burst publishing detection
 
 ## Learnings
 
