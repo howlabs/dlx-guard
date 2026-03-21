@@ -7,7 +7,6 @@ import type { CommandHandler } from "../types.ts";
 import { getPackageMetadata, parsePackageSpec } from "../lib/registry.ts";
 import { assessRisk } from "../lib/risk-scoring.ts";
 import { promptConfirm, restoreStdin } from "../lib/prompt.ts";
-import { InvalidPackageSpecError } from "../errors.ts";
 import { renderRiskAssessment, renderWarning, renderSuccess, renderError, Spinner } from "../ui/output.ts";
 
 export const npxCommand: CommandHandler = async (context) => {
