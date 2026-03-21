@@ -14,6 +14,7 @@ import { checkTyposquat } from "./typosquat.ts";
 import { getThresholds } from "./config.ts";
 import { getPublishFrequencyRisk } from "./publish-frequency.ts";
 import { getOwnerChangeRisk } from "./owner-change.ts";
+import { getDependencyTreeRisk } from "./dependency-tree.ts";
 
 /**
  * Risk score contribution with explanation
@@ -185,6 +186,15 @@ export function calculateRiskScore(metadata: NpmPackageMetadata): ScoreContribut
     contributions.push({
       score: ownerChangeRisk.score,
       reason: ownerChangeRisk.reason,
+    });
+  }
+
+  // Check 8: Dependency tree analysis
+  const depTreeRisk = getDependencyTreeRisk(metadata);
+  if (depTreeRisk) {
+    contributions.push({
+      score: depTreeRisk.score,
+      reason: depTreeRisk.reason,
     });
   }
 

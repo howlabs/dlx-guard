@@ -3,7 +3,7 @@
  * Centralized configuration following single-source-of-truth pattern
  */
 
-export const VERSION = "0.5.1";
+export const VERSION = "0.6.0";
 
 export const NPM_REGISTRY = "https://registry.npmjs.org";
 

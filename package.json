@@ -1,6 +1,6 @@
 {
   "name": "dlx-guard",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "Security wrapper for npx/pnpm dlx/bunx - warns about risky packages before running",
   "type": "module",
   "scripts": {
