@@ -44,7 +44,7 @@ Tất cả core features đã được implement và test.
 
 ### [TODO] Enhanced UI/UX
 - [x] Improve spinner with elapsed time
-- [ ] Add verbose mode for debugging
+- [x] Add verbose mode for debugging
 - [ ] Color-coded risk badges in output
 
 ### [TODO] Configuration File Support
@@ -64,7 +64,7 @@ Tất cả core features đã được implement và test.
 
 ## Project Status
 
-**Version:** v0.3.2
+**Version:** v0.3.3
 **Tests:** 31 passing
 **Typecheck:** Clean
 **Binary:** Working (Windows tested)
@@ -81,6 +81,17 @@ Tất cả core features đã được implement và test.
 - [x] Add formatElapsedTime() helper function
 - [x] Add getElapsedTime() method to Spinner class
 - [x] Apply dim color styling for time display
+- [x] Tests passing, binary built and tested
+
+### [DONE] Loop 9 (v0.3.3) - Verbose Mode
+- [x] Add --verbose flag to CLI and types
+- [x] Create verbose.ts module with structured logging
+- [x] Log configuration (registry, cache dir, TTL)
+- [x] Log registry request URLs
+- [x] Log cache hit/miss status
+- [x] Log timing information (fetch, total execution)
+- [x] Log raw metadata dump
+- [x] Log risk scoring breakdown with contributions
 - [x] Tests passing, binary built and tested
 
 ## Commands Available
