@@ -20,43 +20,43 @@ Ralph Loop: One item at a time, test after each implementation, commit when gree
 - [x] Default to abort if no input
 - [x] Support stdin for piping scenarios
 
-### [IN PROGRESS] Similar-Name Detection (Typosquatting)
-- [ ] Check if package name is similar to popular packages
-- [ ] Add +2 score for potential typosquatting
-- [ ] Levenshtein distance < 3 for names > 5 chars
-- [ ] Build list of popular packages to compare against
+### [DONE] Similar-Name Detection (Typosquatting)
+- [x] Check if package name is similar to popular packages
+- [x] Add +3 score for potential typosquatting
+- [x] Levenshtein distance <= 2 for names > 5 chars
+- [x] Build list of 100+ popular packages to compare against
 
-### [TODO] Publish Frequency Analysis
-- [ ] Detect burst publishing (unusual pattern)
-- [ ] Add +2 score for suspicious publish patterns
-- [ ] Check version history from npm registry
-
-### [TODO] Enhanced UI/UX
-- [ ] Add color-coded risk badges
-- [ ] Improve spinner with elapsed time
-- [ ] Add verbose mode for debugging
-
-### [TODO] Configuration File Support
-- [ ] Support `.dlx-guardrc.json` for user preferences
-- [ ] Allow custom risk thresholds
-- [ ] Allow package whitelist
+### [IN PROGRESS] Build & Test Binary
+- [ ] Build binary với bun build
+- [ ] Test binary với inspect command
+- [ ] Test binary với npx command
+- [ ] Verify executable works correctly
 
 ### [TODO] Shell Integration
 - [ ] Create shell function for easy aliasing
-- [ ] Document integration for bash/zsh/fish
+- [ ] Document integration cho bash/zsh/fish
 
-### [BACKLOG] Enterprise Features
-- [ ] Team audit log
-- [ ] Policy engine integration
-- [ ] Custom registry support
+### [TODO] Enhanced UI/UX
+- [ ] Improve spinner với elapsed time
+- [ ] Add verbose mode cho debugging
+
+### [TODO] Configuration File Support
+- [ ] Support `.dlx-guardrc.json` cho user preferences
+- [ ] Allow custom risk thresholds
+- [ ] Allow package whitelist
+
+### [BACKLOG] Future Enhancements
+- [ ] Publish Frequency Analysis (burst publishing detection)
+- [ ] Enterprise Features (audit log, policy engine, custom registry)
 
 ## Completed Loops
 - [x] **Loop 1 (v0.1.0)**: Git init, initial commit, tag
 - [x] **Loop 2 (v0.1.0)**: Verified pnpm-dlx and bunx commands already implemented
 - [x] **Loop 3 (v0.2.0)**: Interactive prompt for MEDIUM risk packages
+- [x] **Loop 4 (v0.3.0)**: Typosquatting detection with Levenshtein distance
 
 ## Learnings
-- Tests pass (16 passing), typecheck clean
-- Interactive prompt improves UX significantly
-- isTTY là readonly property trong Bun - tests cần được thiết kế cẩn thận
-- Next priority: Typosquatting detection để bảo vệ user khỏi malicious package names
+- Tests pass (31 passing), typecheck clean
+- Typosquatting detection protects against common supply chain attack vector
+- Levenshtein algorithm works well for detecting similar package names
+- Next: Build binary and test end-to-end functionality
