@@ -11,6 +11,7 @@ import {
   DEPENDENCY_THRESHOLDS,
 } from "../constants.ts";
 import { checkTyposquat } from "./typosquat.ts";
+import { getThresholds } from "./config.ts";
 
 /**
  * Risk score contribution with explanation
@@ -172,15 +173,18 @@ export function calculateRiskScore(metadata: NpmPackageMetadata): ScoreContribut
 
 /**
  * Determine risk level from score
+ * Uses configured thresholds from config file or defaults
  */
 function scoreToLevel(score: number): RiskAssessment["level"] {
-  if (score >= RISK_THRESHOLDS.HIGH) {
+  const thresholds = getThresholds();
+
+  if (score >= thresholds.high) {
     return "CRITICAL";
   }
-  if (score >= RISK_THRESHOLDS.MEDIUM) {
+  if (score >= thresholds.medium) {
     return "HIGH";
   }
-  if (score >= RISK_THRESHOLDS.LOW) {
+  if (score >= thresholds.low) {
     return "MEDIUM";
   }
   return "LOW";

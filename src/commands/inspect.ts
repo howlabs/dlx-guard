@@ -7,8 +7,9 @@ import type { CommandHandler } from "../types.ts";
 import { getPackageMetadata, parsePackageSpec } from "../lib/registry.ts";
 import { assessRisk, riskAssessmentToJson, calculateRiskScore } from "../lib/risk-scoring.ts";
 import { InvalidPackageSpecError } from "../errors.ts";
-import { renderRiskAssessment, renderJsonOutput, renderError, Spinner } from "../ui/output.ts";
+import { renderRiskAssessment, renderJsonOutput, renderError, renderSuccess, Spinner } from "../ui/output.ts";
 import { setVerbose, logConfig, logRegistryRequest, logTiming, logMetadataDump, logRiskScoring } from "../lib/verbose.ts";
+import { isPackageWhitelisted } from "../lib/config.ts";
 
 export const inspectCommand: CommandHandler = async (context) => {
   const { packageName, flags } = context;
@@ -32,6 +33,13 @@ export const inspectCommand: CommandHandler = async (context) => {
 
   try {
     const { name } = parsePackageSpec(packageName);
+
+    // Check if package is whitelisted
+    if (isPackageWhitelisted(name)) {
+      spinner.stopAndPersist(`Fetched metadata for ${name}`);
+      renderSuccess(`${name} is whitelisted - skipping risk assessment`);
+      return 0;
+    }
 
     if (flags.verbose) {
       logRegistryRequest(name);

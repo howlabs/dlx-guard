@@ -13,6 +13,7 @@ import { VERSION } from "./constants.ts";
 import { COMMAND_REGISTRY } from "./commands.ts";
 import { handleError } from "./errors.ts";
 import { renderHelp } from "./ui/help.ts";
+import { loadConfiguration, isVerboseByDefault } from "./lib/config.ts";
 
 interface ParsedArgs {
   command?: string;
@@ -80,7 +81,16 @@ function parseCliArgs(args: string[]): ParsedArgs {
  * Main CLI entry point
  */
 async function main(): Promise<number> {
+  // Load configuration file first
+  await loadConfiguration();
+
   const args = parseCliArgs(process.argv.slice(2));
+
+  // Merge config file verbose setting with command-line flag
+  // CLI flag takes precedence
+  if (isVerboseByDefault() && !args.flags.verbose) {
+    args.flags.verbose = true;
+  }
 
   // Handle version flag
   if (args.flags.version) {

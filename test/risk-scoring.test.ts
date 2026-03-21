@@ -2,9 +2,15 @@
  * Tests for risk scoring engine
  */
 
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect, beforeAll } from "bun:test";
 import { assessRisk } from "../src/lib/risk-scoring.ts";
 import type { NpmPackageMetadata } from "../src/types.ts";
+import { loadConfiguration } from "../src/lib/config.ts";
+
+// Load default configuration before tests
+beforeAll(async () => {
+  await loadConfiguration();
+});
 
 function createMetadata(
   overrides: Partial<NpmPackageMetadata> = {}
