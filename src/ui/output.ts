@@ -15,7 +15,29 @@ const COLORS = {
   green: "\x1b[32m",
   blue: "\x1b[34m",
   cyan: "\x1b[36m",
+  bgRed: "\x1b[41m",
+  bgYellow: "\x1b[43m",
+  bgGreen: "\x1b[42m",
+  white: "\x1b[37m",
 } as const;
+
+/**
+ * Get badge text for risk level
+ */
+function badgeForLevel(level: string): string {
+  switch (level) {
+    case "LOW":
+      return `${COLORS.bright}${COLORS.bgGreen}${COLORS.white} SAFE ${COLORS.reset}`;
+    case "MEDIUM":
+      return `${COLORS.bright}${COLORS.bgYellow}${COLORS.white} CAUTION ${COLORS.reset}`;
+    case "HIGH":
+      return `${COLORS.bright}${COLORS.bgRed}${COLORS.white} WARNING ${COLORS.reset}`;
+    case "CRITICAL":
+      return `${COLORS.bright}${COLORS.bgRed}${COLORS.white} DANGER ${COLORS.reset}`;
+    default:
+      return `${COLORS.dim}UNKNOWN${COLORS.reset}`;
+  }
+}
 
 /**
  * Colorize text based on risk level
@@ -43,10 +65,11 @@ export function renderRiskAssessment(
   assessment: RiskAssessment
 ): void {
   const levelColor = colorForLevel(assessment.level);
+  const badge = badgeForLevel(assessment.level);
 
   console.log("");
   console.log(`${COLORS.bright}Package:${COLORS.reset} ${packageName}`);
-  console.log(`${COLORS.bright}Risk:${COLORS.reset} ${levelColor}${assessment.level}${COLORS.reset} (${assessment.score}/10)`);
+  console.log(`${COLORS.bright}Risk:${COLORS.reset} ${badge} ${levelColor}${assessment.level}${COLORS.reset} (${assessment.score}/10)`);
   console.log("");
 
   if (assessment.reasons.length > 0) {
