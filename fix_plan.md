@@ -14,13 +14,13 @@ Ralph Loop: One item at a time, test after each implementation, commit when gree
 - [x] `bunx` command - fully implemented
 - [x] Both mirror `npx` command behavior
 
-### [IN PROGRESS] Interactive Prompt for MEDIUM Risk
-- [ ] Add interactive confirmation prompt for MEDIUM risk packages
-- [ ] Use `--yes` flag to skip prompt
-- [ ] Default to abort if no input
-- [ ] Support stdin for piping scenarios
+### [DONE] Interactive Prompt for MEDIUM Risk
+- [x] Add interactive confirmation prompt for MEDIUM risk packages
+- [x] Use `--yes` flag to skip prompt
+- [x] Default to abort if no input
+- [x] Support stdin for piping scenarios
 
-### [TODO] Similar-Name Detection (Typosquatting)
+### [IN PROGRESS] Similar-Name Detection (Typosquatting)
 - [ ] Check if package name is similar to popular packages
 - [ ] Add +2 score for potential typosquatting
 - [ ] Levenshtein distance < 3 for names > 5 chars
@@ -53,9 +53,10 @@ Ralph Loop: One item at a time, test after each implementation, commit when gree
 ## Completed Loops
 - [x] **Loop 1 (v0.1.0)**: Git init, initial commit, tag
 - [x] **Loop 2 (v0.1.0)**: Verified pnpm-dlx and bunx commands already implemented
+- [x] **Loop 3 (v0.2.0)**: Interactive prompt for MEDIUM risk packages
 
 ## Learnings
-- Tests pass (13 passing), typecheck clean
-- Code follows gstack patterns (command registry, structured errors)
-- pnpm-dlx and bunx were already fully implemented (not stubs as initially noted)
-- Next priority: Interactive prompt for better UX on MEDIUM risk
+- Tests pass (16 passing), typecheck clean
+- Interactive prompt improves UX significantly
+- isTTY là readonly property trong Bun - tests cần được thiết kế cẩn thận
+- Next priority: Typosquatting detection để bảo vệ user khỏi malicious package names

@@ -10,6 +10,7 @@ import {
   RISK_SCORES,
   DEPENDENCY_THRESHOLDS,
 } from "../constants.ts";
+import { checkTyposquat } from "./typosquat.ts";
 
 /**
  * Risk score contribution with explanation
@@ -99,6 +100,15 @@ function hasSparseMetadata(metadata: NpmPackageMetadata): boolean {
  */
 function calculateRiskScore(metadata: NpmPackageMetadata): ScoreContribution[] {
   const contributions: ScoreContribution[] = [];
+
+  // Check 0: Typosquatting (được check đầu tiên vì high risk)
+  const typosquatResult = checkTyposquat(metadata.name);
+  if (typosquatResult.isTyposquat && typosquatResult.similarPackage) {
+    contributions.push({
+      score: RISK_SCORES.TYPOSQUATTING,
+      reason: `Package name similar to popular package "${typosquatResult.similarPackage}" (possible typosquatting)`,
+    });
+  }
 
   // Check 1: Recently published package
   if (isRecentlyPublished(metadata)) {
