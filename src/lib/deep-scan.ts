@@ -31,7 +31,7 @@ export interface DeepScanOptions {
   /** Scan timeout in milliseconds (default: 30000) */
   timeout?: number;
   /** Include dev dependencies (default: false) */
-  includeDev?: number;
+  includeDev?: boolean;
   /** Skip cache (default: false) */
   skipCache?: boolean;
 }

@@ -158,7 +158,7 @@ export async function analyzeDependencyTree(
 export function analyzeDependencyTreeSync(
   metadata: NpmPackageMetadata
 ): DependencyTreeResult {
-  if (!cachedMaliciousPackages) {
+  if (!cachedMaliciousPackages || !cachedMaliciousDetails) {
     // Not initialized, return safe default
     return {
       directCount: Object.keys(metadata.dependencies || {}).length,
