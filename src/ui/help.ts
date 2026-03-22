@@ -23,6 +23,7 @@ OPTIONS:
   -V, --verbose         Enable verbose debug output
       --no-verbose      Disable verbose output (overrides config)
       --dry-run         Check package without executing
+      --deep-scan       Analyze transitive dependencies (slower)
   -h, --help            Show this help message
   -v, --version         Show version number
 
@@ -38,6 +39,9 @@ EXAMPLES:
 
   # Get JSON output for scripting
   dlx-guard inspect --json some-package
+
+  # Deep scan for transitive dependencies
+  dlx-guard inspect --deep-scan express
 
 RISK LEVELS:
   Low        - Package appears safe to run

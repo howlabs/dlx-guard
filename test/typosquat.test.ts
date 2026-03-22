@@ -2,8 +2,13 @@
  * Tests for typosquatting detection
  */
 
-import { describe, it, expect } from "bun:test";
-import { levenshtein, checkTyposquat, getPopularPackages } from "../src/lib/typosquat.ts";
+import { describe, it, expect, beforeAll } from "bun:test";
+import { levenshtein, checkTyposquatSync as checkTyposquat, getPopularPackages, initializeTyposquatData } from "../src/lib/typosquat.ts";
+
+// Initialize data before running tests
+beforeAll(async () => {
+  await initializeTyposquatData();
+});
 
 describe("levenshtein", () => {
   it("should return 0 for identical strings", () => {
@@ -90,15 +95,15 @@ describe("checkTyposquat", () => {
 });
 
 describe("getPopularPackages", () => {
-  it("should return an array of strings", () => {
-    const packages = getPopularPackages();
+  it("should return an array of strings", async () => {
+    const packages = await getPopularPackages();
     expect(Array.isArray(packages)).toBe(true);
     expect(packages.length).toBeGreaterThan(0);
     expect(typeof packages[0]).toBe("string");
   });
 
-  it("should contain known popular packages", () => {
-    const packages = getPopularPackages();
+  it("should contain known popular packages", async () => {
+    const packages = await getPopularPackages();
     expect(packages).toContain("react");
     expect(packages).toContain("vue");
     expect(packages).toContain("express");

@@ -9,11 +9,23 @@ import {
   RISK_SCORES,
   DEPENDENCY_THRESHOLDS,
 } from "../constants.ts";
-import { checkTyposquat } from "./typosquat.ts";
+import { checkTyposquatSync, initializeTyposquatData } from "./typosquat.ts";
+import { analyzeDependencyTreeSync, initializeMaliciousData } from "./dependency-tree.ts";
 import { getThresholds } from "./config.ts";
 import { getPublishFrequencyRisk } from "./publish-frequency.ts";
 import { getOwnerChangeRisk } from "./owner-change.ts";
-import { getDependencyTreeRisk } from "./dependency-tree.ts";
+import { checkOsvAdvisories, calculateOsvRiskScore } from "./osv-advisory.ts";
+
+/**
+ * Initialize risk scoring data
+ * Call this during app startup to load security data
+ */
+export async function initializeRiskScoringData(): Promise<void> {
+  await Promise.all([
+    initializeTyposquatData(),
+    initializeMaliciousData(),
+  ]);
+}
 
 /**
  * Risk score contribution with explanation
@@ -85,10 +97,10 @@ function hasLargeDependencyGraph(metadata: NpmPackageMetadata): boolean {
  * Check if metadata is sparse
  */
 function hasSparseMetadata(metadata: NpmPackageMetadata): boolean {
-  const hasDescription = !!(metadata as any).description;
-  const hasHomepage = !!(metadata as any).homepage;
-  const hasRepository = !!(metadata as any).repository;
-  const hasKeywords = !!((metadata as any).keywords?.length > 0);
+  const hasDescription = !!metadata.description;
+  const hasHomepage = !!metadata.homepage;
+  const hasRepository = !!metadata.repository;
+  const hasKeywords = metadata.keywords && metadata.keywords.length > 0;
 
   // Sparse if missing most metadata fields
   const signalCount = [hasDescription, hasHomepage, hasRepository, hasKeywords].filter(
@@ -105,7 +117,7 @@ export function calculateRiskScore(metadata: NpmPackageMetadata): ScoreContribut
   const contributions: ScoreContribution[] = [];
 
   // Check 0: Typosquatting (checked first due to high risk)
-  const typosquatResult = checkTyposquat(metadata.name);
+  const typosquatResult = checkTyposquatSync(metadata.name);
   if (typosquatResult.isTyposquat && typosquatResult.similarPackage) {
     contributions.push({
       score: RISK_SCORES.TYPOSQUATTING,
@@ -188,12 +200,20 @@ export function calculateRiskScore(metadata: NpmPackageMetadata): ScoreContribut
     });
   }
 
-  // Check 8: Dependency tree analysis
-  const depTreeRisk = getDependencyTreeRisk(metadata);
-  if (depTreeRisk) {
+  // Check 8: Dependency tree analysis (synchronous version)
+  const depTreeResult = analyzeDependencyTreeSync(metadata);
+  if (depTreeResult.hasKnownMalicious || depTreeResult.hasSuspiciousPatterns) {
+    let score = 1; // Base score for suspicious patterns
+
+    if (depTreeResult.hasKnownMalicious) {
+      score = 5; // Critical - known malicious packages
+    } else if (depTreeResult.flaggedDependencies.length >= 3) {
+      score = 2; // Multiple suspicious dependencies
+    }
+
     contributions.push({
-      score: depTreeRisk.score,
-      reason: depTreeRisk.reason,
+      score,
+      reason: depTreeResult.reason || "Suspicious dependency patterns detected",
     });
   }
 
@@ -307,5 +327,102 @@ export function riskAssessmentToJson(
       hasInstallScripts: hasInstallScripts(metadata),
       dependencyCount: countDependencies(metadata),
     },
+  };
+}
+
+/**
+ * Extended risk assessment with OSV vulnerability checking
+ * This is an async function that queries the OSV API for known vulnerabilities
+ *
+ * @param packageName - Package name
+ * @param metadata - Package metadata
+ * @param version - Optional version to check (defaults to latest from metadata)
+ * @returns Risk assessment with OSV vulnerability information included
+ */
+export async function assessRiskWithOsv(
+  packageName: string,
+  metadata: NpmPackageMetadata,
+  version?: string
+): Promise<{
+  assessment: RiskAssessment;
+  osvAdvisories: Array<{
+    id: string;
+    summary: string;
+    severity: string;
+  }>;
+  osvRiskScore?: number;
+}> {
+  // Get base risk assessment
+  const assessment = assessRisk(metadata);
+
+  // Check OSV for known vulnerabilities
+  const { advisories } = await checkOsvAdvisories(
+    packageName,
+    version || metadata.version
+  );
+
+  const osvAdvisories = advisories.map((a) => ({
+    id: a.id,
+    summary: a.summary,
+    severity: a.severity.map((s) => `${s.type}:${s.score}`).join(", "),
+  }));
+
+  // Calculate OSV-specific risk score
+  const osvRisk = calculateOsvRiskScore(advisories);
+
+  // If OSV found vulnerabilities, add them to the assessment
+  if (osvRisk) {
+    assessment.reasons.push(osvRisk.reason);
+    assessment.score = Math.min(assessment.score + osvRisk.score, 15); // Cap at 15
+    assessment.level = scoreToLevel(assessment.score);
+
+    // Update recommendations based on OSV findings
+    if (osvRisk.score >= 4) {
+      assessment.recommendations.push(
+        "Package has known CRITICAL or HIGH severity vulnerabilities"
+      );
+    }
+  }
+
+  return {
+    assessment,
+    osvAdvisories,
+    osvRiskScore: osvRisk?.score,
+  };
+}
+
+/**
+ * Quick OSV check - returns vulnerability count without full assessment
+ * Useful for quick validation before running commands
+ *
+ * @param packageName - Package name
+ * @param version - Optional version to check
+ * @returns Object with vulnerability count and critical/high severity count
+ */
+export async function quickOsvCheck(
+  packageName: string,
+  version?: string
+): Promise<{
+  hasVulnerabilities: boolean;
+  count: number;
+  criticalOrHigh: number;
+}> {
+  const { advisories } = await checkOsvAdvisories(packageName, version);
+
+  let criticalOrHigh = 0;
+  for (const advisory of advisories) {
+    for (const severity of advisory.severity) {
+      const score = parseFloat(severity.score);
+      if (score >= 7.0) {
+        criticalOrHigh++;
+        break;
+      }
+    }
+  }
+
+  return {
+    hasVulnerabilities: advisories.length > 0,
+    count: advisories.length,
+    criticalOrHigh,
   };
 }

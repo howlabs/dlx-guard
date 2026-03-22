@@ -9,6 +9,7 @@ import { assessRisk, calculateRiskScore } from "../lib/risk-scoring.ts";
 import { renderRiskAssessment, renderJsonOutput, renderError, renderSuccess, Spinner } from "../ui/output.ts";
 import { setVerbose, logConfig, logRegistryRequest, logTiming, logMetadataDump, logRiskScoring } from "../lib/verbose.ts";
 import { isPackageWhitelisted } from "../lib/config.ts";
+import { deepDependencyScan, formatDeepScanResult, getDeepScanRisk } from "../lib/deep-scan.ts";
 
 export const inspectCommand: CommandHandler = async (context) => {
   const { packageName, flags } = context;
@@ -61,6 +62,41 @@ export const inspectCommand: CommandHandler = async (context) => {
     }
 
     spinner.stopAndPersist(`Fetched metadata for ${name}`);
+
+    // Perform deep scan if requested
+    if (flags.deepScan) {
+      const deepScanSpinner = new Spinner();
+      deepScanSpinner.start(`Running deep dependency scan for ${name}...`);
+
+      const deepResult = await deepDependencyScan(name, {
+        maxDepth: 2,
+        timeout: 30000,
+      });
+
+      deepScanSpinner.stop(`Deep scan complete`);
+
+      // Add deep scan results to output
+      console.log(formatDeepScanResult(deepResult));
+
+      // Update risk assessment with deep scan findings
+      const deepRisk = getDeepScanRisk(deepResult);
+      if (deepRisk) {
+        assessment.reasons.push(deepRisk.reason);
+        assessment.score = Math.min(assessment.score + deepRisk.score, 15);
+        // Recalculate level based on new score
+        if (assessment.score >= 10) {
+          assessment.level = "CRITICAL";
+        } else if (assessment.score >= 6) {
+          assessment.level = "HIGH";
+        } else if (assessment.score >= 3) {
+          assessment.level = "MEDIUM";
+        }
+      }
+
+      if (deepResult.timedOut) {
+        renderWarning("Deep scan timed out - results may be incomplete");
+      }
+    }
 
     if (flags.json) {
       renderJsonOutput({

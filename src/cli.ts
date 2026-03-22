@@ -14,6 +14,7 @@ import { COMMAND_REGISTRY } from "./commands.ts";
 import { handleError } from "./errors.ts";
 import { renderHelp } from "./ui/help.ts";
 import { loadConfiguration, isVerboseByDefault } from "./lib/config.ts";
+import { initializeRiskScoringData } from "./lib/risk-scoring.ts";
 
 interface ParsedArgs {
   command?: string;
@@ -26,6 +27,7 @@ interface ParsedArgs {
     version: boolean;
     verbose: boolean | null; // null = use config, true = force on, false = force off
     dryRun: boolean;
+    deepScan: boolean;
   };
 }
 
@@ -43,6 +45,7 @@ function parseCliArgs(args: string[]): ParsedArgs {
       verbose: { type: "boolean", short: "V" },
       "no-verbose": { type: "boolean" },
       "dry-run": { type: "boolean" },
+      "deep-scan": { type: "boolean" },
     },
     allowPositionals: true,
     strict: false,
@@ -67,6 +70,7 @@ function parseCliArgs(args: string[]): ParsedArgs {
       version: (values.version ?? false) as boolean,
       verbose: verboseFlag,
       dryRun: ((values["dry-run"] as boolean | undefined) ?? false),
+      deepScan: ((values["deep-scan"] as boolean | undefined) ?? false),
     },
   };
 
@@ -89,6 +93,13 @@ function parseCliArgs(args: string[]): ParsedArgs {
 async function main(): Promise<number> {
   // Load configuration file first
   await loadConfiguration();
+
+  // Initialize security data (typosquat lists, malicious packages)
+  // This is done in background and caches the data for synchronous access
+  initializeRiskScoringData().catch((error) => {
+    // Non-fatal: log but don't block startup
+    console.error(`Warning: Failed to load security data: ${(error as Error).message}`);
+  });
 
   const args = parseCliArgs(process.argv.slice(2));
 
@@ -136,8 +147,9 @@ async function main(): Promise<number> {
       yes: args.flags.yes,
       help: args.flags.help,
       version: args.flags.version,
-      verbose: finalVerbose, // Resolved to boolean
+      verbose: finalVerbose,
       dryRun: args.flags.dryRun,
+      deepScan: args.flags.deepScan,
     },
   });
 }

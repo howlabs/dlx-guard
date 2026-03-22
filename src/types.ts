@@ -25,6 +25,8 @@ export interface CommandContext {
     verbose: boolean;
     /** Dry run - check only, don't execute */
     dryRun: boolean;
+    /** Deep scan - analyze transitive dependencies */
+    deepScan: boolean;
   };
 }
 
@@ -60,6 +62,14 @@ export interface NpmPackageMetadata {
   maintainers?: Array<{ name: string; email?: string }>;
   /** Number of weeks package has been published */
   weeks?: number;
+  /** Package description */
+  description?: string;
+  /** Package homepage URL */
+  homepage?: string;
+  /** Package repository URL */
+  repository?: string | { type: string; url: string };
+  /** Package keywords */
+  keywords?: string[];
   scripts?: {
     preinstall?: string;
     install?: string;

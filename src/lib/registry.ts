@@ -7,6 +7,7 @@ import type { NpmPackageMetadata, CacheEntry } from "../types.ts";
 import { NPM_REGISTRY, CACHE_DIR, CACHE_TTL } from "../constants.ts";
 import { RegistryFetchError, PackageNotFoundError } from "../errors.ts";
 import { logCacheHit } from "./verbose.ts";
+import { validateCacheEntry, safeParseCacheEntry } from "./cache-validation.ts";
 
 /**
  * Parse package name and version from spec
@@ -140,7 +141,17 @@ export async function loadCachedMetadata(packageName: string): Promise<NpmPackag
       return null;
     }
 
-    const cached: CacheEntry = await file.json();
+    // Read file content as text first for safer parsing
+    const raw = await file.text();
+
+    // Use safe parse with validation
+    const cached = safeParseCacheEntry(raw);
+    if (!cached) {
+      // Validation failed - cache is corrupted
+      logCacheHit(packageName, false);
+      return null;
+    }
+
     const age = Date.now() - cached.cachedAt;
 
     if (age > CACHE_TTL) {
@@ -148,8 +159,14 @@ export async function loadCachedMetadata(packageName: string): Promise<NpmPackag
     }
 
     return cached.metadata;
-  } catch {
-    return null; // Cache miss or invalid
+  } catch (error) {
+    // Specific error handling for different failure modes
+    if (error instanceof SyntaxError) {
+      logCacheHit(packageName, false);
+      return null;
+    }
+    // Other errors (file not found, permission issues, etc.)
+    return null;
   }
 }
 

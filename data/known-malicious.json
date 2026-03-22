@@ -1,0 +1,50 @@
+{
+  "version": "2026-03-22",
+  "description": "List of known malicious packages involved in security incidents",
+  "packages": [
+    {
+      "name": "crossenv",
+      "reason": "Malicious package that exfiltrated environment variables",
+      "incidentDate": "2017-07-18"
+    },
+    {
+      "name": "event-stream",
+      "reason": "Compromised version containing bitcoin wallet stealer",
+      "incidentDate": "2018-11-26"
+    },
+    {
+      "name": "ua-parser-js",
+      "reason": "Compromised versions with malicious code (0.7.29, 0.8.0, 1.0.0)",
+      "incidentDate": "2022-01-15",
+      "affectedVersions": ["0.7.29", "0.8.0", "1.0.0"]
+    },
+    {
+      "name": "flatmap-stream",
+      "reason": "Malicious package used to steal bitcoin wallets",
+      "incidentDate": "2018-11-26"
+    },
+    {
+      "name": "eslint-plugin-snapi",
+      "reason": "Typosquatting package with malicious installer",
+      "incidentDate": "2019-06-12"
+    }
+  ],
+  "suspiciousPatterns": [
+    {
+      "pattern": "^test-",
+      "reason": "Many typosquat packages use test- prefix to appear legitimate"
+    },
+    {
+      "pattern": "-cli$",
+      "reason": "Common in fake CLI tools targeting popular packages"
+    },
+    {
+      "pattern": "-dev$",
+      "reason": "Common in fake dev tools"
+    },
+    {
+      "pattern": "^@types/.+",
+      "reason": "Some @types packages have been compromised in the past"
+    }
+  ]
+}

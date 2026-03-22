@@ -6,6 +6,31 @@
  * to popular packages but with small typos to trick users into installing them.
  */
 
+import { getPopularPackages as loadPopularPackages } from "./data-loader.ts";
+
+// Cached popular packages for synchronous access (initialized on first load)
+let cachedPopularPackages: string[] | null = null;
+
+/**
+ * Initialize the cached popular packages list
+ * Call this early (e.g., during app startup) for synchronous access later
+ */
+export async function initializeTyposquatData(): Promise<void> {
+  if (!cachedPopularPackages) {
+    cachedPopularPackages = await loadPopularPackages();
+  }
+}
+
+/**
+ * Ensure popular packages are loaded (lazy initialization)
+ */
+async function ensurePopularPackagesLoaded(): Promise<string[]> {
+  if (!cachedPopularPackages) {
+    cachedPopularPackages = await loadPopularPackages();
+  }
+  return cachedPopularPackages;
+}
+
 /**
  * Calculate Levenshtein distance between two strings
  * Lower numbers indicate more similar strings
@@ -40,109 +65,7 @@ export function levenshtein(a: string, b: string): number {
 }
 
 /**
- * List of popular npm packages
- * These are common targets for typosquatting attacks
- */
-const POPULAR_PACKAGES = [
-  // CLI tools
-  "npm",
-  "npx",
-  "yarn",
-  "pnpm",
-  "bun",
-  "bunx",
-  "node",
-  "nvm",
-
-  // Frontend frameworks
-  "react",
-  "vue",
-  "angular",
-  "svelte",
-  "solid-js",
-  "preact",
-  "next",
-  "nuxt",
-  "remix",
-
-  // Build tools
-  "vite",
-  "webpack",
-  "rollup",
-  "esbuild",
-  "parcel",
-  "turbo",
-  "babel",
-  "typescript",
-  "ts-node",
-
-  // Testing
-  "jest",
-  "vitest",
-  "mocha",
-  "jasmine",
-  "cypress",
-  "playwright",
-  "puppeteer",
-
-  // Libraries
-  "lodash",
-  "axios",
-  "express",
-  "koa",
-  "fastify",
-  "moment",
-  "dayjs",
-  "date-fns",
-
-  // Utilities
-  "chalk",
-  "ora",
-  "inquirer",
-  "commander",
-  "yargs",
-  "minimist",
-  "dotenv",
-  "eslint",
-  "prettier",
-
-  // React ecosystem
-  "redux",
-  "mobx",
-  "zustand",
-  "recoil",
-  "jotai",
-  "react-router",
-  "react-query",
-
-  // Vue ecosystem
-  "vuex",
-  "pinia",
-  "vue-router",
-
-  // Node.js utilities
-  "fs-extra",
-  "glob",
-  "rimraf",
-  "mkdirp",
-  "cross-env",
-  "nodemon",
-  "pm2",
-
-  // Popular CLIs
-  "create-react-app",
-  "create-vite",
-  "create-next-app",
-  "scaffold",
-  "yeoman",
-  "generator",
-];
-
-/**
- * Check if package name might be a typosquatting attempt
- *
- * @param packageName - Package name to check
- * @returns Object with isTyposquat and similarPackage if found
+ * Typosquat check result
  */
 export interface TyposquatResult {
   isTyposquat: boolean;
@@ -150,7 +73,36 @@ export interface TyposquatResult {
   distance?: number;
 }
 
-export function checkTyposquat(packageName: string): TyposquatResult {
+/**
+ * Synchronous typosquat check (requires prior initialization)
+ * Use this after calling initializeTyposquatData() during app startup
+ */
+export function checkTyposquatSync(packageName: string): TyposquatResult {
+  if (!cachedPopularPackages) {
+    // Not initialized, return safe default
+    return { isTyposquat: false };
+  }
+
+  return checkTyposquatWithList(packageName, cachedPopularPackages);
+}
+
+/**
+ * Async typosquat check (loads data on demand)
+ * Use this if you haven't initialized the data yet
+ */
+export async function checkTyposquat(packageName: string): Promise<TyposquatResult> {
+  const popularPackages = await ensurePopularPackagesLoaded();
+  return checkTyposquatWithList(packageName, popularPackages);
+}
+
+/**
+ * Core typosquat checking logic
+ * @internal
+ */
+function checkTyposquatWithList(
+  packageName: string,
+  popularPackages: string[]
+): TyposquatResult {
   const name = packageName.toLowerCase().replace(/^@[^/]+\//, ""); // Remove scope
 
   // Skip if package name is too short
@@ -159,12 +111,12 @@ export function checkTyposquat(packageName: string): TyposquatResult {
   }
 
   // Skip if package already exists in popular list
-  if (POPULAR_PACKAGES.includes(name)) {
+  if (popularPackages.includes(name)) {
     return { isTyposquat: false };
   }
 
   // Check distance against each popular package
-  for (const popular of POPULAR_PACKAGES) {
+  for (const popular of popularPackages) {
     // Only check if popular package has reasonable length
     if (popular.length < 5) continue;
 
@@ -206,7 +158,16 @@ export function checkTyposquat(packageName: string): TyposquatResult {
 
 /**
  * Get list of popular packages (for testing/config)
+ * Now async since it loads from data files
  */
-export function getPopularPackages(): string[] {
-  return [...POPULAR_PACKAGES];
+export async function getPopularPackages(): Promise<string[]> {
+  return loadPopularPackages();
+}
+
+/**
+ * Get cached popular packages (for synchronous access)
+ * Returns null if not yet initialized
+ */
+export function getCachedPopularPackages(): string[] | null {
+  return cachedPopularPackages ? [...cachedPopularPackages] : null;
 }
