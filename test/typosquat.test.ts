@@ -1,5 +1,5 @@
 /**
- * Tests cho typosquatting detection
+ * Tests for typosquatting detection
  */
 
 import { describe, it, expect } from "bun:test";
@@ -34,19 +34,19 @@ describe("checkTyposquat", () => {
   });
 
   it("should detect typosquatting with one character difference", () => {
-    const result = checkTyposquat("reect"); // Typo của "react"
+    const result = checkTyposquat("reect"); // Typo of "react"
     expect(result.isTyposquat).toBe(true);
     expect(result.similarPackage).toBe("react");
   });
 
   it("should detect typosquatting with two character difference", () => {
-    const result = checkTyposquat("reaact"); // Thừa 'a'
+    const result = checkTyposquat("reaact"); // Extra 'a'
     expect(result.isTyposquat).toBe(true);
     expect(result.similarPackage).toBe("react");
   });
 
   it("should not flag short names with distance > 1", () => {
-    const result = checkTyposquat("rea"); // Khá xa "react"
+    const result = checkTyposquat("rea"); // Too far from "react"
     expect(result.isTyposquat).toBe(false);
   });
 
@@ -62,20 +62,20 @@ describe("checkTyposquat", () => {
   });
 
   it("should detect typosquatting for other popular packages", () => {
-    // Express (length 7, nên distance <= 2 sẽ được check)
+    // Express (length 7, so distance <= 2 will be checked)
     expect(checkTyposquat("exprss").isTyposquat).toBe(true);
 
-    // Lodash (length 6, nên distance <= 2 sẽ được check)
+    // Lodash (length 6, so distance <= 2 will be checked)
     expect(checkTyposquat("lodas").isTyposquat).toBe(true);
 
-    // Axios (length 5, nên distance <= 2 sẽ được check)
+    // Axios (length 5, so distance <= 2 will be checked)
     expect(checkTyposquat("axio").isTyposquat).toBe(true);
 
-    // TypeScript (length 10, nên distance <= 2 sẽ được check)
+    // TypeScript (length 10, so distance <= 2 will be checked)
     expect(checkTyposquat("typescrip").isTyposquat).toBe(true);
 
-    // Note: Vue (length 3) không được check vì quá ngắn
-    // skip short package tests vì logic chỉ check packages >= 5 chars
+    // Note: Vue (length 3) is not checked because it's too short
+    // skip short package tests because logic only checks packages >= 5 chars
   });
 
   it("should not flag legitimate different packages", () => {

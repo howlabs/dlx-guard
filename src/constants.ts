@@ -39,7 +39,7 @@ export const RISK_SCORES = {
   WEAK_OWNER_HISTORY: 2, // +2 if package owner history weak
   LARGE_DEPENDENCY_GRAPH: 2, // +2 if dependency graph abnormally large
   SPARSE_METADATA: 1, // +1 if metadata sparse
-  TYPOSQUATTING: 3, // +3 if package name giống popular package (typosquatting)
+  TYPOSQUATTING: 3, // +3 if package name similar to popular package (typosquatting)
 } as const;
 
 /**

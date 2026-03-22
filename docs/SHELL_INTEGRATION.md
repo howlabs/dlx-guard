@@ -1,10 +1,10 @@
 # Shell Integration
 
-Dùng dlx-guard như wrapper cho npx/pnpm dlx/bunx.
+Use dlx-guard as a wrapper for npx/pnpm dlx/bunx.
 
 ## Bash / Zsh
 
-Thêm vào `~/.bashrc` hoặc `~/.zshrc`:
+Add to `~/.bashrc` or `~/.zshrc`:
 
 ```bash
 # npx wrapper
@@ -23,7 +23,7 @@ bunx() {
 }
 ```
 
-Hoặc dùng alias đơn giản hơn:
+Or use a simpler alias:
 
 ```bash
 alias npx='dlx-guard npx'
@@ -33,7 +33,7 @@ alias bunx='dlx-guard bunx'
 
 ## Fish Shell
 
-Tạo function trong `~/.config/fish/functions/npx.fish`:
+Create function in `~/.config/fish/functions/npx.fish`:
 
 ```fish
 function npx
@@ -41,32 +41,32 @@ function npx
 end
 ```
 
-Tạo tương tự cho pnpm-dlx và bunx.
+Create similar functions for pnpm-dlx and bunx.
 
 ## Usage Examples
 
-Sau khi setup:
+After setup:
 
 ```bash
-# Thay vì npx create-react-app
+# Instead of npx create-react-app
 npx create-react-app my-app
 
-# Thay vì pnpm dlx create-vite
+# Instead of pnpm dlx create-vite
 pnpm-dlx create-vite my-app
 
-# Thay vì bunx some-cli
+# Instead of bunx some-cli
 bunx some-cli --option
 ```
 
 ## Bypass Protection
 
-Để bypass security check (không khuyến khích):
+To bypass security check (not recommended):
 
 ```bash
 npx -y some-package
 ```
 
-Hoặc dùng trực tiếp original command:
+Or use the original command directly:
 
 ```bash
 command npx some-package

@@ -4,7 +4,7 @@ Ralph Loop: One item at a time, test after each implementation, commit when gree
 
 ## Status: MVP COMPLETE v0.3.0
 
-Tất cả core features đã được implement và test.
+All core features have been implemented and tested.
 
 ## Completed Loops
 

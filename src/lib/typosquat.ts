@@ -2,13 +2,13 @@
  * Typosquatting detection
  * Following gstack pattern: security-focused, well-tested utility
  *
- * Typosquatting là kỹ thuật attacker tạo package tên giống package nổi tiếng
- * nhưng có lỗi chính tả nhỏ để lỡ user cài nhầm.
+ * Typosquatting is a technique where attackers create packages with names similar
+ * to popular packages but with small typos to trick users into installing them.
  */
 
 /**
- * Tính Levenshtein distance giữa 2 strings
- * Số càng nhỏ thì càng giống nhau
+ * Calculate Levenshtein distance between two strings
+ * Lower numbers indicate more similar strings
  */
 export function levenshtein(a: string, b: string): number {
   const matrix: number[][] = [];
@@ -40,8 +40,8 @@ export function levenshtein(a: string, b: string): number {
 }
 
 /**
- * List của popular npm packages
- * Đây là target thường bị typosquatting
+ * List of popular npm packages
+ * These are common targets for typosquatting attacks
  */
 const POPULAR_PACKAGES = [
   // CLI tools
@@ -139,10 +139,10 @@ const POPULAR_PACKAGES = [
 ];
 
 /**
- * Check if package name có thể là typosquatting attempt
+ * Check if package name might be a typosquatting attempt
  *
- * @param packageName - Package name cần check
- * @returns Object với isTyposquat và similarPackage nếu tìm thấy
+ * @param packageName - Package name to check
+ * @returns Object with isTyposquat and similarPackage if found
  */
 export interface TyposquatResult {
   isTyposquat: boolean;
@@ -153,25 +153,25 @@ export interface TyposquatResult {
 export function checkTyposquat(packageName: string): TyposquatResult {
   const name = packageName.toLowerCase().replace(/^@[^/]+\//, ""); // Remove scope
 
-  // Skip nếu package name quá ngắn
+  // Skip if package name is too short
   if (name.length < 3) {
     return { isTyposquat: false };
   }
 
-  // Skip nếu package đã tồn tại trong popular list
+  // Skip if package already exists in popular list
   if (POPULAR_PACKAGES.includes(name)) {
     return { isTyposquat: false };
   }
 
-  // Check distance với mỗi popular package
+  // Check distance against each popular package
   for (const popular of POPULAR_PACKAGES) {
-    // Chỉ check nếu popular package có độ dài tương đối
+    // Only check if popular package has reasonable length
     if (popular.length < 5) continue;
 
     const distance = levenshtein(name, popular);
 
-    // Distance <= 2 cho package dài > 5 chars là nghi ngờ
-    // Distance = 1 cho package ngắn hơn cũng nghi ngờ
+    // Distance <= 2 for packages > 5 chars is suspicious
+    // Distance = 1 for shorter packages is also suspicious
     const isClose =
       (popular.length > 5 && distance <= 2) ||
       (popular.length <= 5 && distance === 1);
@@ -185,7 +185,7 @@ export function checkTyposquat(packageName: string): TyposquatResult {
     }
   }
 
-  // Check các pattern typosquatting phổ biến
+  // Check common typosquatting patterns
   const typosquatPatterns = [
     /^([a-z]+)-([a-z]+)\1$/, // Double prefix like "react-react"
     /^([a-z]+)\1$/, // Double name like "reactreact"
@@ -205,7 +205,7 @@ export function checkTyposquat(packageName: string): TyposquatResult {
 }
 
 /**
- * Lấy danh sách popular packages (để testing/config)
+ * Get list of popular packages (for testing/config)
  */
 export function getPopularPackages(): string[] {
   return [...POPULAR_PACKAGES];

@@ -1,6 +1,6 @@
 /**
- * Tests cho prompt utilities
- * Chỉ test logic cơ bản, không test interactive terminal behavior
+ * Tests for prompt utilities
+ * Only test basic logic, not interactive terminal behavior
  */
 
 import { describe, it, expect } from "bun:test";
@@ -26,8 +26,8 @@ describe("restoreStdin", () => {
   });
 });
 
-// Note: Interactive prompt tests skipped vì isTTY là readonly trong Bun
-// Trong production, promptConfirm hoạt động đúng với terminal TTY
+// Note: Interactive prompt tests skipped because isTTY is readonly in Bun
+// In production, promptConfirm works correctly with TTY terminals
 describe("promptConfirm", () => {
   it("should be exported as a function", async () => {
     const { promptConfirm } = await import("../src/lib/prompt.ts");

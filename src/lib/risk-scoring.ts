@@ -104,7 +104,7 @@ function hasSparseMetadata(metadata: NpmPackageMetadata): boolean {
 export function calculateRiskScore(metadata: NpmPackageMetadata): ScoreContribution[] {
   const contributions: ScoreContribution[] = [];
 
-  // Check 0: Typosquatting (được check đầu tiên vì high risk)
+  // Check 0: Typosquatting (checked first due to high risk)
   const typosquatResult = checkTyposquat(metadata.name);
   if (typosquatResult.isTyposquat && typosquatResult.similarPackage) {
     contributions.push({
