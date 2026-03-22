@@ -1,4 +1,4 @@
-name: Release
+name: Publish on Release (Manual)
 
 on:
   release:
@@ -12,6 +12,7 @@ jobs:
   publish:
     name: Publish to npm
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
